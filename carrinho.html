@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <a href="index.html"><h1>Loja Online</h1></a>
+        <div class="carrinho-badge">
+            <a href="carrinho.html">
+                <i class="bi bi-cart icone-carrinho"></i>
+                <span class="contador">3</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="carrinho">
+
+        <div class="carrinho-produtos">
+            <!--Aqui serão colocados os items do carrinho dinamicamente -->
+        </div>
+
+        <div class="total">
+            <p>Total: R$ <span class="total-compra"></span></p>
+            <button class="botao-comprar">Finalizar Compra</button>
+        </div>
+    </main>
+
+    <script>
+
+        let carrinho = localStorage.getItem("carrinho");
+
+        carrinho = JSON.parse(carrinho);
+        console.log(carrinho)
+
+        elementosNoCarrinho = carrinho.length;
+
+        for (let i = 0; i < elementosNoCarrinho; i++) {
+            gerarItemCarrinho(carrinho[i]);
+        }
+
+        function gerarItemCarrinho(produto) {
+
+            let itemCarrinho = document.createElement('div');
+            itemCarrinho.classList.add('item-carrinho');
+
+            let item = document.createElement('div');
+            item.classList.add('item');
+
+            let imagem = document.createElement('img');
+            imagem.src = "https://picsum.photos/300/500";
+            imagem.classList.add('item-img')
+
+            let botaoRemover = document.createElement('button');
+            botaoRemover.textContent = "Remover";
+            botaoRemover.classList.add('botao-remover')
+
+            let itemInfo = document.createElement('div');
+            itemInfo.classList.add('item-info');
+
+            let tituloProduto = document.createElement('h2');
+            tituloProduto.textContent = produto.nome;
+
+            let valorProduto = document.createElement('p');
+            valorProduto.classList.add('preco');
+            valorProduto.textContent = produto.preço;
+
+            let quantidadeProduto = document.createElement('input');
+            quantidadeProduto.id = "quantidade"
+            quantidadeProduto.type = "number"
+            quantidadeProduto.value = produto.quantidade;
+
+            item.appendChild(imagem)
+            itemInfo.appendChild(tituloProduto);
+            itemInfo.appendChild(valorProduto);
+            itemInfo.appendChild(quantidadeProduto);
+            item.appendChild(itemInfo);
+            itemCarrinho.prepend(item);
+
+            let carrinho = document.querySelector('.carrinho-produtos');
+            carrinho.appendChild(itemCarrinho);
+            itemCarrinho.appendChild(botaoRemover)
+
+            botaoRemover.addEventListener('click', () => {
+                itemCarrinho.remove(itemCarrinho)
+
+                let carrinho = JSON.parse(localStorage.getItem('carrinho'));
+                carrinho.forEach((produto, index) => {
+                    if (produto.nome == produto.nome) {
+                        carrinho.splice(index, 1)
+                    }
+                });
+                carrinho = JSON.stringify(carrinho)
+                localStorage.setItem('carrinho', carrinho)
+            })
+
+        }
+
+        function recalcularTotal() {
+            let carrinho = JSON.parse(localStorage.getItem('carrinho'));
+            let total = 0;
+            carrinho.forEach((produto) => {
+                let preco = produto.preço;
+                preco = preco.replace('R$', '')
+                preco = preco.replace(',', '.')
+                let quantidade = produto.quantidade;
+                total += preco * quantidade;
+
+            });
+            let totalCompra = document.querySelector('.total-compra')
+
+            totalCompra.textContent = total;
+        }
+
+        recalcularTotal();
+    </script>
+</body>
+</html>
